@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    name="GravityWP + AIWOS Standard"
+    xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd"
+>
+    <description>Shared PHPCS baseline for GravityWP and AIWOS themes.</description>
+
+    <!-- CLI quality-of-life -->
+    <arg name="basepath" value="."/>
+    <arg name="cache" value=".phpcs-cache"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+    <arg name="extensions" value="php"/>
+
+    <!-- Scope -->
+
+    <!-- Generic exclusions -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/dist/*</exclude-pattern>
+    <exclude-pattern>*/build/*</exclude-pattern>
+    <exclude-pattern>*/languages/*</exclude-pattern>
+
+    <!-- Standard WordPress folders / core -->
+    <exclude-pattern>*/wp-admin/*</exclude-pattern>
+    <exclude-pattern>*/wp-includes/*</exclude-pattern>
+    <exclude-pattern>*/wp-content/*</exclude-pattern>
+    <exclude-pattern>web/wp/*</exclude-pattern>
+
+    <rule ref="WordPress">
+        <!-- No Yoda conditions -->
+        <exclude name="WordPress.PHP.YodaConditions"/>      
+        <!-- variable names with starting underscores are present a lot in GF related plugins -->
+        <exclude name="PSR2.Classes.PropertyDeclaration.Underscore"/>
+        <!-- Don't care about the snake case for properties -->
+        <exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase"/>
+        <exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar"/>
+        <!-- Disable a few rules that are cosmetical and we don't want to enforce -->
+        <exclude name="Universal.Arrays.DisallowShortArraySyntax.Found"/>
+        <exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound"/>
+        <exclude name="Squiz.Operators.ValidLogicalOperators.NotAllowed"/>
+        <exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>
+        <!--
+            Project-specific exceptions can be added, but keep one-off exceptions out of this shared baseline where possible.
+        -->
+    </rule>
+
+</ruleset>
