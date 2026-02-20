@@ -1,0 +1,57 @@
+name: PHPCS (WPCS)
+
+on:
+  workflow_call:
+    inputs:
+      php_version:
+        type: string
+        default: "8.2"
+      standards_ref:
+        type: string
+        default: "main"
+      base_branch:
+        type: string
+        default: "develop"
+      scan_path:
+        type: string
+        default: "."
+
+
+permissions:
+  contents: read
+
+jobs:
+  phpcs:
+    name: PHPCS (WPCS)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          tools: composer:v2
+
+      - name: Checkout central standards (aiwos/.github)
+        uses: actions/checkout@v4
+        with:
+          repository: aiwos/.github
+          ref: main
+          path: .aiwos-standards
+
+      - name: Copy central phpcs.xml
+        run: cp .aiwos-standards/phpcs.xml ./.phpcs.xml
+
+      - name: Install dependencies
+        run: |
+          composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Show installed coding standards
+        run: vendor/bin/phpcs -i
+
+      - name: Run PHPCS
+        run: |
+          vendor/bin/phpcs --standard=./.phpcs.xml .
