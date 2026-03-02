@@ -38,57 +38,18 @@ jobs:
         run: |
           composer install --no-interaction --no-progress --prefer-dist
 
-      - name: Download central phpcs.xml (no checkout, no copy)
+      - name: Download central phpcs.xml
         run: |
           mkdir -p /tmp/aiwos-phpcs
           curl -fsSL \
             -o /tmp/aiwos-phpcs/phpcs.xml \
             https://raw.githubusercontent.com/aiwos/.github/${{ inputs.standards_ref }}/phpcs.xml
 
-      - name: Build PHPCS ruleset (central + optional local)
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          CENTRAL="/tmp/aiwos-phpcs/phpcs.xml"
-          WRAPPER="/tmp/aiwos-phpcs/wrapper.xml"
-
-          # Detect common local ruleset filenames (first match wins)
-          LOCAL=""
-          for f in phpcs.xml .phpcs.xml phpcs.xml.dist .phpcs.xml.dist; do
-            if [ -f "$f" ]; then
-              LOCAL="$f"
-              break
-            fi
-          done
-
-          if [ -n "$LOCAL" ]; then
-            echo "Local PHPCS ruleset detected: $LOCAL"
-            printf '%s\n' \
-              '<?xml version="1.0"?>' \
-              '<ruleset name="AIWOS Wrapper (Central + Local)">' \
-              '  <description>Central AIWOS standards + repository local additions.</description>' \
-              "  <rule ref=\"$CENTRAL\"/>" \
-              "  <rule ref=\"$LOCAL\"/>" \
-              '</ruleset>' \
-              > "$WRAPPER"
-          else
-            echo "No local PHPCS ruleset detected; using central only."
-            printf '%s\n' \
-              '<?xml version="1.0"?>' \
-              '<ruleset name="AIWOS Wrapper (Central)">' \
-              '  <description>Central AIWOS standards.</description>' \
-              "  <rule ref=\"$CENTRAL\"/>" \
-              '</ruleset>' \
-              > "$WRAPPER"
-          fi
-
-          echo "--- wrapper.xml ---"
-          cat "$WRAPPER"
-
       - name: Show installed coding standards
         run: vendor/bin/phpcs -i
 
-      - name: Run PHPCS
+      - name: Run PHPCS (central ruleset only)
         run: |
-          vendor/bin/phpcs --standard=/tmp/aiwos-phpcs/wrapper.xml ${{ inputs.scan_path }}
+          vendor/bin/phpcs \
+            --standard=/tmp/aiwos-phpcs/phpcs.xml \
+            ${{ inputs.scan_path }}
