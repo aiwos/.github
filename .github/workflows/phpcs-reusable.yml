@@ -15,6 +15,9 @@ on:
       scan_path:
         type: string
         default: "."
+      tools_dir:
+        type: string
+        default: "/tmp/phpcs-tools"
 
 permissions:
   contents: read
@@ -34,9 +37,21 @@ jobs:
           php-version: ${{ inputs.php_version }}
           tools: composer:v2
 
-      - name: Install dependencies
+      - name: Install PHPCS tooling (composer require)
         run: |
-          composer install --no-interaction --no-progress --prefer-dist
+          set -euo pipefail
+          TOOL_DIR="${{ inputs.tools_dir }}"
+          mkdir -p "$TOOL_DIR"
+          cd "$TOOL_DIR"
+
+          composer init --no-interaction --name=aiwos/phpcs-tools --type=project
+
+          composer require --dev --no-interaction --no-progress \
+            squizlabs/php_codesniffer:^3.13 \
+            wp-coding-standards/wpcs:^3.1 \
+            phpcsstandards/phpcsextra:^1.2 \
+            phpcsstandards/phpcsutils:^1.1 \
+            dealerdirect/phpcodesniffer-composer-installer:^1.0
 
       - name: Download central phpcs.xml
         run: |
@@ -46,10 +61,11 @@ jobs:
             https://raw.githubusercontent.com/aiwos/.github/${{ inputs.standards_ref }}/phpcs.xml
 
       - name: Show installed coding standards
-        run: vendor/bin/phpcs -i
+        run: |
+          ${{ inputs.tools_dir }}/vendor/bin/phpcs -i
 
       - name: Run PHPCS (central ruleset only)
         run: |
-          vendor/bin/phpcs \
+          ${{ inputs.tools_dir }}/vendor/bin/phpcs \
             --standard=/tmp/aiwos-phpcs/phpcs.xml \
             ${{ inputs.scan_path }}
