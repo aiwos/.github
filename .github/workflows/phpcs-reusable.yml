@@ -46,6 +46,10 @@ jobs:
 
           composer init --no-interaction --name=aiwos/phpcs-tools --type=project
 
+          # Allow the Composer plugin BEFORE installing it
+          composer config --no-interaction allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+
+          # Now install everything (including the plugin)
           composer require --dev --no-interaction --no-progress \
             squizlabs/php_codesniffer:^3.13 \
             wp-coding-standards/wpcs:^3.1 \
