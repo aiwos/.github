@@ -72,4 +72,5 @@ jobs:
         run: |
           ${{ inputs.tools_dir }}/vendor/bin/phpcs \
             --standard=/tmp/aiwos-phpcs/phpcs.xml \
+            --extensions=php \
             ${{ inputs.scan_path }}
