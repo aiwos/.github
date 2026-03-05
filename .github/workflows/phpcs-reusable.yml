@@ -1,0 +1,76 @@
+name: PHPCS (WPCS)
+
+on:
+  workflow_call:
+    inputs:
+      php_version:
+        type: string
+        default: "8.2"
+      standards_ref:
+        type: string
+        default: "main"
+      base_branch:
+        type: string
+        default: "develop"
+      scan_path:
+        type: string
+        default: "."
+      tools_dir:
+        type: string
+        default: "/tmp/phpcs-tools"
+
+permissions:
+  contents: read
+
+jobs:
+  phpcs:
+    name: PHPCS (WPCS)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php_version }}
+          tools: composer:v2
+
+      - name: Install PHPCS tooling (composer require)
+        run: |
+          set -euo pipefail
+          TOOL_DIR="${{ inputs.tools_dir }}"
+          mkdir -p "$TOOL_DIR"
+          cd "$TOOL_DIR"
+
+          composer init --no-interaction --name=aiwos/phpcs-tools --type=project
+
+          # Allow the Composer plugin BEFORE installing it
+          composer config --no-interaction allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+
+          # Now install everything (including the plugin)
+          composer require --dev --no-interaction --no-progress \
+            squizlabs/php_codesniffer:^3.13 \
+            wp-coding-standards/wpcs:^3.1 \
+            phpcsstandards/phpcsextra:^1.2 \
+            phpcsstandards/phpcsutils:^1.1 \
+            dealerdirect/phpcodesniffer-composer-installer:^1.0
+
+      - name: Download central phpcs.xml
+        run: |
+          mkdir -p /tmp/aiwos-phpcs
+          curl -fsSL \
+            -o /tmp/aiwos-phpcs/phpcs.xml \
+            https://raw.githubusercontent.com/aiwos/.github/${{ inputs.standards_ref }}/phpcs.xml
+
+      - name: Show installed coding standards
+        run: |
+          ${{ inputs.tools_dir }}/vendor/bin/phpcs -i
+
+      - name: Run PHPCS (central ruleset only)
+        run: |
+          ${{ inputs.tools_dir }}/vendor/bin/phpcs \
+            --standard=/tmp/aiwos-phpcs/phpcs.xml \
+            --extensions=php \
+            ${{ inputs.scan_path }}
