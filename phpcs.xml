@@ -1,49 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ruleset
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    name="GravityWP + AIWOS Standard"
-    xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	name="GravityWP + AIWOS Standard"
+	xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd"
 >
-    <description>Shared PHPCS baseline for GravityWP and AIWOS themes.</description>
+	<description>Shared PHPCS baseline for GravityWP and AIWOS themes.</description>
 
-    <!-- CLI quality-of-life -->
-    <arg name="basepath" value="."/>
-    <arg name="cache" value=".phpcs-cache"/>
-    <arg name="colors"/>
-    <arg value="sp"/>
-    <arg name="extensions" value="php"/>
+	<!-- CLI quality-of-life -->
+	<arg name="basepath" value="."/>
+	<arg name="cache" value=".phpcs-cache"/>
+	<arg name="colors"/>
+	<arg value="sp"/>
+	<arg name="extensions" value="php"/>
 
-    <!-- Scope -->
+	<!-- Generic exclusions -->
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/dist/*</exclude-pattern>
+	<exclude-pattern>*/build/*</exclude-pattern>
+	<exclude-pattern>*/languages/*</exclude-pattern>
 
-    <!-- Generic exclusions -->
-    <exclude-pattern>*/vendor/*</exclude-pattern>
-    <exclude-pattern>*/node_modules/*</exclude-pattern>
-    <exclude-pattern>*/dist/*</exclude-pattern>
-    <exclude-pattern>*/build/*</exclude-pattern>
-    <exclude-pattern>*/languages/*</exclude-pattern>
+	<!-- Standard WordPress folders / core -->
+	<exclude-pattern>*/wp-admin/*</exclude-pattern>
+	<exclude-pattern>*/wp-includes/*</exclude-pattern>
+	<exclude-pattern>*/wp-content/*</exclude-pattern>
+	<exclude-pattern>web/wp/*</exclude-pattern>
 
-    <!-- Standard WordPress folders / core -->
-    <exclude-pattern>*/wp-admin/*</exclude-pattern>
-    <exclude-pattern>*/wp-includes/*</exclude-pattern>
-    <exclude-pattern>*/wp-content/*</exclude-pattern>
-    <exclude-pattern>web/wp/*</exclude-pattern>
-
-    <rule ref="WordPress">
-        <!-- No Yoda conditions -->
-        <exclude name="WordPress.PHP.YodaConditions"/>      
-        <!-- variable names with starting underscores are present a lot in GF related plugins -->
-        <exclude name="PSR2.Classes.PropertyDeclaration.Underscore"/>
-        <!-- Don't care about the snake case for properties -->
-        <exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase"/>
-        <exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar"/>
-        <!-- Disable a few rules that are cosmetical and we don't want to enforce -->
-        <exclude name="Universal.Arrays.DisallowShortArraySyntax.Found"/>
-        <exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound"/>
-        <exclude name="Squiz.Operators.ValidLogicalOperators.NotAllowed"/>
-        <exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>
-        <!--
-            Project-specific exceptions can be added, but keep one-off exceptions out of this shared baseline where possible.
-        -->
-    </rule>
-
+	<rule ref="WordPress">
+		<!-- No Yoda conditions. -->
+		<exclude name="WordPress.PHP.YodaConditions"/>
+		<!-- Gravity Forms Add-On Framework requires underscore-prefixed metadata. -->
+		<exclude name="PSR2.Classes.PropertyDeclaration.Underscore"/>
+		<!-- Gravity Forms exposes camelCase dynamic field properties. -->
+		<exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase"/>
+		<exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCaseMemberVar"/>
+		<!-- Namespaced plugins use PSR-4 class filenames. -->
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+		<!-- Cosmetic rules not enforced by shared baseline. -->
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax.Found"/>
+		<exclude name="Generic.PHP.DisallowShortOpenTag.EchoFound"/>
+		<exclude name="Squiz.Operators.ValidLogicalOperators.NotAllowed"/>
+		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>
+		<!-- Allow compact associative arrays and optional assignment alignment. -->
+		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound"/>
+		<exclude name="Generic.Formatting.MultipleStatementAlignment.NotSameWarning"/>
+		<exclude name="Generic.Formatting.MultipleStatementAlignment.IncorrectWarning"/>
+		<exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned"/>
+		<!-- Allow optional blank lines before closing braces and nested single ifs. -->
+		<exclude name="PSR2.Classes.ClassDeclaration.CloseBraceAfterBody"/>
+		<exclude name="PSR2.Methods.FunctionClosingBrace.SpacingBeforeClose"/>
+		<exclude name="Universal.ControlStructures.DisallowLonelyIf.Found"/>
+		<!-- Syntax preferences: equivalent forms remain allowed. -->
+		<exclude name="PSR2.ControlStructures.ElseIfDeclaration.NotAllowed"/>
+		<exclude name="Universal.Operators.DisallowShortTernary.Found"/>
+		<exclude name="Universal.Operators.DisallowStandalonePostIncrementDecrement.PostIncrementFound"/>
+		<exclude name="Universal.Operators.DisallowStandalonePostIncrementDecrement.PostDecrementFound"/>
+		<!-- Doc-comment punctuation is optional; type/parameter checks remain enabled. -->
+		<exclude name="Squiz.Commenting.FunctionComment.ThrowsNotCapital"/>
+		<exclude name="Squiz.Commenting.FunctionComment.ThrowsNoFullStop"/>
+		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentNotCapital"/>
+		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop"/>
+		<exclude name="Squiz.Commenting.InlineComment.NotCapital"/>
+	</rule>
 </ruleset>
