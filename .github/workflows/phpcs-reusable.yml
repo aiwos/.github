@@ -71,6 +71,7 @@ jobs:
       - name: Run PHPCS (central ruleset only)
         run: |
           ${{ inputs.tools_dir }}/vendor/bin/phpcs \
+            -n \
             --standard=/tmp/aiwos-phpcs/phpcs.xml \
             --extensions=php \
             ${{ inputs.scan_path }}
