@@ -23,7 +23,6 @@
 	<!-- Standard WordPress folders / core -->
 	<exclude-pattern>*/wp-admin/*</exclude-pattern>
 	<exclude-pattern>*/wp-includes/*</exclude-pattern>
-	<exclude-pattern>*/wp-content/*</exclude-pattern>
 	<exclude-pattern>web/wp/*</exclude-pattern>
 
 	<rule ref="WordPress">
@@ -63,4 +62,20 @@
 		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop"/>
 		<exclude name="Squiz.Commenting.InlineComment.NotCapital"/>
 	</rule>
+
+	<!-- Documentation remains visible locally, but does not block CI with -n. -->
+	<rule ref="Squiz.Commenting.FunctionComment"><type>warning</type></rule>
+	<rule ref="Squiz.Commenting.VariableComment"><type>warning</type></rule>
+	<rule ref="Squiz.Commenting.ClassComment"><type>warning</type></rule>
+	<rule ref="Squiz.Commenting.FileComment"><type>warning</type></rule>
+	<rule ref="Squiz.Commenting.InlineComment"><type>warning</type></rule>
+	<rule ref="Generic.Commenting.DocComment"><type>warning</type></rule>
+
+	<!-- Security findings always block CI. -->
+	<rule ref="WordPress.Security.EscapeOutput"><type>error</type></rule>
+	<rule ref="WordPress.Security.NonceVerification"><type>error</type></rule>
+	<rule ref="WordPress.Security.ValidatedSanitizedInput"><type>error</type></rule>
+	<rule ref="WordPress.Security.SafeRedirect"><type>error</type></rule>
+	<rule ref="WordPress.DB.PreparedSQL"><type>error</type></rule>
+	<rule ref="WordPress.DB.PreparedSQLPlaceholders"><type>error</type></rule>
 </ruleset>
