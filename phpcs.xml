@@ -78,4 +78,14 @@
 	<rule ref="WordPress.Security.SafeRedirect"><type>error</type></rule>
 	<rule ref="WordPress.DB.PreparedSQL"><type>error</type></rule>
 	<rule ref="WordPress.DB.PreparedSQLPlaceholders"><type>error</type></rule>
+
+	<!-- Security-relevant sniffs that are warnings by default: keep blocking with -n. -->
+	<rule ref="WordPress.Security.PluginMenuSlug"><type>error</type></rule>
+	<rule ref="WordPress.PHP.DiscouragedPHPFunctions"><type>error</type></rule>
+	<rule ref="WordPress.PHP.StrictInArray"><type>error</type></rule>
+	<rule ref="Universal.Operators.StrictComparisons"><type>error</type></rule>
+	<rule ref="WordPress.WP.AlternativeFunctions"><type>error</type></rule>
+	<rule ref="WordPress.PHP.NoSilencedErrors"><type>error</type></rule>
+	<rule ref="WordPress.PHP.DevelopmentFunctions"><type>error</type></rule>
+	<rule ref="WordPress.DB.DirectDatabaseQuery"><type>error</type></rule>
 </ruleset>
